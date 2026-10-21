@@ -1,7 +1,10 @@
 node_modules
 npm-debug.log
-Dockerfile
-docker-compose.yml
+dockerfile
+docker-compose*.yml
+docker-compose*.yaml
 .git
 .env
+.env.*
 README.md
+diagrams

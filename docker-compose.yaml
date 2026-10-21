@@ -1,10 +1,12 @@
-version: '3.8'
-
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: dockerfile
     container_name: toolshare_backend
     restart: always
+    init: true
+    command: npm run dev
     ports:
       - "3000:3000"
     environment:
@@ -16,7 +18,8 @@ services:
       - .:/usr/src/app
       - /usr/src/app/node_modules
     depends_on:
-      - mongo
+      mongo:
+        condition: service_healthy
     networks:
       - toolshare-net
 
@@ -24,6 +27,12 @@ services:
     image: mongo:7.0
     container_name: toolshare_mongo
     restart: always
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "quit(db.adminCommand('ping').ok ? 0 : 1)"]
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 12
     ports:
       - "27017:27017"
     volumes:
