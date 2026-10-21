@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    container_name: toolshare_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+      - PORT=3000
+      - MONGO_URI=mongodb://mongo:27017/toolshare
+      - JWT_SECRET=votre_secret_jwt_super_securise
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - mongo
+    networks:
+      - toolshare-net
+
+  mongo:
+    image: mongo:7.0
+    container_name: toolshare_mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    networks:
+      - toolshare-net
+
+volumes:
+  mongo_data:
+    driver: local
+
+networks:
+  toolshare-net:
+    driver: bridge

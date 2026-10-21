@@ -1,0 +1,99 @@
+@startuml ToolShare
+skinparam classAttributeIconSize 0
+hide empty methods
+
+enum Role {
+  ADMIN
+  GESTIONNAIRE
+  UTILISATEUR
+}
+
+enum StatutReservation {
+  CONFIRMEE
+  ANNULEE
+  EN_COURS
+  TERMINEE
+}
+
+enum EtatMateriel {
+  BON
+  endommagE
+}
+
+class Utilisateur {
+  +id : ObjectId
+  +nom : String
+  +prenom : String
+  +email : String
+  +motDePasseHash : String
+  +role : Role
+  +actif : Boolean
+  +magasinId : ObjectId
+  +creePar : ObjectId
+  +createdAt : Date
+}
+
+class Magasin {
+  +id : ObjectId
+  +nom : String
+  +site : String
+  +adresse : String
+  +actif : Boolean
+  +createdAt : Date
+}
+
+class Materiel {
+  +id : ObjectId
+  +reference : String
+  +nom : String
+  +categorie : String
+  +description : String
+  +disponible : Boolean
+  +actif : Boolean
+  +magasinId : ObjectId
+}
+
+class Reservation {
+  +id : ObjectId
+  +utilisateurId : ObjectId
+  +magasinId : ObjectId
+  +materielId : ObjectId
+  +dateDebut : Date
+  +dureeHeures : Number
+  +dateFin : Date
+  +statut : StatutReservation
+  +dateSortieReelle : Date
+  +dateRetourReelle : Date
+  +etatRetour : EtatMateriel
+}
+
+class Mouvement {
+  +id : ObjectId
+  +reservationId : ObjectId
+  +magasinId : ObjectId
+  +type : String
+  +effectuePar : ObjectId
+  +date : Date
+  +etat : EtatMateriel
+}
+
+class Installation {
+  +id : ObjectId
+  +installe : Boolean
+  +installeLe : Date
+}
+
+Utilisateur "0..*" --> "0..1" Magasin : affecté à
+Utilisateur "0..*" --> "0..1" Utilisateur : créé par
+Magasin "1" *-- "0..*" Materiel : possède
+Utilisateur "1" --> "0..*" Reservation : effectue
+Materiel "1" --> "0..*" Reservation : est réservé
+Magasin "1" --> "0..*" Reservation : reçoit
+Reservation "1" *-- "0..*" Mouvement : génère
+Mouvement "0..*" --> "1" Utilisateur : effectué par
+
+Utilisateur ..> Role
+Reservation ..> StatutReservation
+Reservation ..> EtatMateriel
+Mouvement ..> EtatMateriel
+@enduml
