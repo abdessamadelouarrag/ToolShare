@@ -1,0 +1,6 @@
+const ROLES = Object.freeze(['ADMIN', 'GESTIONNAIRE', 'UTILISATEUR']);
+const STATUTS_RESERVATION = Object.freeze(['CONFIRMEE', 'ANNULEE', 'EN_COURS', 'TERMINEE']);
+const ETATS_MATERIEL = Object.freeze(['BON', 'ENDOMMAGE']);
+const TYPES_MOUVEMENT = Object.freeze(['SORTIE', 'RETOUR']);
+
+module.exports = { ROLES, STATUTS_RESERVATION, ETATS_MATERIEL, TYPES_MOUVEMENT };
