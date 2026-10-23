@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const bcrypt = require("bcrypt");
 const Utilisateur = require("../models/Utilisateur");
 const Installation = require("../models/Installation");
@@ -24,26 +25,34 @@ async function install(req, res, next){
             return res.status(400).json({message_error : "Mot de passe : minimum 8 caracteres, maximum 72 octets !"});
         }
 
-        const installation = await Installation.findById("installation");
-        const findAdmin = await Utilisateur.exists({role : "ADMIN"});
-        if(installation?.installe || findAdmin){
+        const hashedPassword = await bcrypt.hash(motDePasse, 10);
+        const admin = await mongoose.connection.transaction(async (session) => {
+            const installation = await Installation.findById("installation").session(session);
+            const findAdmin = await Utilisateur.exists({role : "ADMIN"}).session(session);
+            if(installation?.installe || findAdmin){
+                return null;
+            }
+
+            // Le document unique serialise les installations simultanees.
+            const state = installation || new Installation();
+            state.installe = true;
+            state.installeLe = new Date();
+            await state.save({session});
+
+            const user = new Utilisateur({
+                nom : nom.trim(),
+                prenom : prenom.trim(),
+                email : email.trim().toLowerCase(),
+                motDePasseHash : hashedPassword,
+                role : "ADMIN"
+            });
+            await user.save({session});
+            return user;
+        });
+
+        if(!admin){
             return res.status(409).json({message_error : "L'application est deja initialisee ou un Admin existe deja !"});
         }
-
-        const hashedPassword = await bcrypt.hash(motDePasse, 10);
-        const admin = new Utilisateur({
-            nom : nom.trim(),
-            prenom : prenom.trim(),
-            email : email.trim().toLowerCase(),
-            motDePasseHash : hashedPassword,
-            role : "ADMIN"
-        });
-        await admin.save();
-        await Installation.findOneAndUpdate(
-            {_id : "installation"},
-            {$set : {installe : true, installeLe : new Date()}},
-            {upsert : true, runValidators : true}
-        );
         return res.status(201).json({
             message_success : "Installation effectuee.",
             installe : true,

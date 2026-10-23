@@ -34,6 +34,9 @@ d'une insertion, meme dans une transaction sans ecriture partagee, ne suffit pas
 Le document Installation utilise l'identifiant unique `installation`.
 `GET /api/installation/status` retourne `{ "installe": false }` ou `{ "installe": true }`.
 `POST /api/installation` accepte `nom`, `prenom`, `email` et `motDePasse`.
-Le controleur cree le premier Admin avec un mot de passe hache et conserve l'etat dans MongoDB.
-Une nouvelle installation retourne 409 apres initialisation.
+Le controleur cree l'Admin et l'etat d'installation dans la meme transaction.
+Une nouvelle installation retourne 409 apres initialisation. Le mot de passe est
+hache avec bcrypt et n'est pas renvoye. L'ancien endpoint `/api/auth/default` est supprime.
+MongoDB doit fonctionner en replica set; Compose configure automatiquement un membre `rs0`
+et conserve le volume existant. Depuis l'hote, utiliser `directConnection=true` dans l'URI.
 Ne pas supprimer les documents desactives afin de conserver l'historique.
