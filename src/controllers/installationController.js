@@ -24,9 +24,10 @@ async function install(req, res, next){
             return res.status(400).json({message_error : "Mot de passe : minimum 8 caracteres, maximum 72 octets !"});
         }
 
+        const installation = await Installation.findById("installation");
         const findAdmin = await Utilisateur.exists({role : "ADMIN"});
-        if(findAdmin){
-            return res.status(409).json({message_error : "Un Admin existe deja !"});
+        if(installation?.installe || findAdmin){
+            return res.status(409).json({message_error : "L'application est deja initialisee ou un Admin existe deja !"});
         }
 
         const hashedPassword = await bcrypt.hash(motDePasse, 10);

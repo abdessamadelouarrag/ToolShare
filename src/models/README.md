@@ -35,4 +35,5 @@ Le document Installation utilise l'identifiant unique `installation`.
 `GET /api/installation/status` retourne `{ "installe": false }` ou `{ "installe": true }`.
 `POST /api/installation` accepte `nom`, `prenom`, `email` et `motDePasse`.
 Le controleur cree le premier Admin avec un mot de passe hache et conserve l'etat dans MongoDB.
+Une nouvelle installation retourne 409 apres initialisation.
 Ne pas supprimer les documents desactives afin de conserver l'historique.
