@@ -3,6 +3,8 @@ require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const connectDB = require('./src/config/db');
+const Installation = require('./src/models/Installation');
+const installationRouter = require('./src/routes/installationRouter');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -21,8 +23,11 @@ app.get('/health', (req, res) => {
   });
 });
 
+app.use('/api/installation', installationRouter);
+
 async function start() {
   await connectDB();
+  await Installation.init();
 
   const server = app.listen(port, '0.0.0.0', () => {
     console.log(`ToolShare API listening on port ${port}`);
