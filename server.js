@@ -8,6 +8,7 @@ import Installation from "./src/models/Installation.js";
 import authRouter from "./src/routes/authRouter.js";
 import profileRouter from "./src/routes/profileRouter.js";
 import installationRouter from "./src/routes/installationRouter.js";
+import magasinRouter from "./src/routes/magasinRouter.js";
 import {errorHandler} from "./src/middlewares/errorHandler.js";
 
 const app = express();
@@ -30,6 +31,7 @@ app.get("/health", (req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/installation", installationRouter);
+app.use("/api/magasins", magasinRouter);
 app.use(errorHandler);
 
 async function startServer(){
