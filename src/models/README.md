@@ -5,7 +5,7 @@ Les etats du materiel sont `BON` et `ENDOMMAGE`; les mouvements sont `SORTIE`
 et `RETOUR`. Tous les modeles possedent `createdAt` et `updatedAt`.
 
 ```js
-const { Utilisateur, Magasin, Materiel, Reservation, Mouvement, Installation } = require('./src/models');
+import { Utilisateur, Magasin, Materiel, Reservation, Mouvement, Installation } from './src/models/index.js';
 ```
 
 Utiliser `document.save()` pour valider les documents et calculer `dateFin`

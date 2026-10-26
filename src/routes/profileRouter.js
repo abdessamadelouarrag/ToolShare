@@ -1,6 +1,6 @@
-const {Router} = require("express");
-const {verifyToken} = require("../middlewares/verifyToken");
-const {showProfile, updateUser, updatePassword} = require("../controllers/profileController");
+import {Router} from "express";
+import {verifyToken} from "../middlewares/verifyToken.js";
+import {showProfile, updateUser, updatePassword} from "../controllers/profileController.js";
 
 const router = Router();
 
@@ -8,4 +8,4 @@ router.get("/infos", verifyToken, showProfile);
 router.patch("/", verifyToken, updateUser);
 router.patch("/password", verifyToken, updatePassword);
 
-module.exports = router;
+export default router;

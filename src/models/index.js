@@ -1,8 +1,6 @@
-module.exports = {
-  Utilisateur: require('./Utilisateur'),
-  Magasin: require('./Magasin'),
-  Materiel: require('./Materiel'),
-  Reservation: require('./Reservation'),
-  Mouvement: require('./Mouvement'),
-  Installation: require('./Installation'),
-};
+export { default as Utilisateur } from './Utilisateur.js';
+export { default as Magasin } from './Magasin.js';
+export { default as Materiel } from './Materiel.js';
+export { default as Reservation } from './Reservation.js';
+export { default as Mouvement } from './Mouvement.js';
+export { default as Installation } from './Installation.js';

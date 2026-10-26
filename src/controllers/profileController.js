@@ -1,11 +1,11 @@
-const Utilisateur = require("../models/Utilisateur");
-const bcrypt = require("bcrypt");
+import Utilisateur from "../models/Utilisateur.js";
+import bcrypt from "bcrypt";
 
-function showProfile(req, res){
+export function showProfile(req, res){
     return res.status(200).json({user : req.user});
 }
 
-async function updateUser(req, res, next){
+export async function updateUser(req, res, next){
     try{
         const {nom, prenom, email} = req.body || {};
         const updates = {};
@@ -45,7 +45,7 @@ async function updateUser(req, res, next){
     }
 }
 
-async function updatePassword(req, res, next){
+export async function updatePassword(req, res, next){
     try{
         const {motDePasseActuel, nouveauMotDePasse} = req.body || {};
         if(typeof motDePasseActuel !== "string" || !motDePasseActuel
@@ -79,5 +79,3 @@ async function updatePassword(req, res, next){
         next(error);
     }
 }
-
-module.exports = {showProfile, updateUser, updatePassword};

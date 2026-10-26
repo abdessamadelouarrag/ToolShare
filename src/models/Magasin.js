@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const magasinSchema = new mongoose.Schema({
   nom: { type: String, required: true, trim: true },
@@ -9,4 +9,4 @@ const magasinSchema = new mongoose.Schema({
 
 magasinSchema.index({ actif: 1, site: 1 });
 
-module.exports = mongoose.model('Magasin', magasinSchema);
+export default mongoose.model('Magasin', magasinSchema);

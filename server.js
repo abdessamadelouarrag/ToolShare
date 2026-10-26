@@ -1,14 +1,14 @@
-require("dotenv").config();
-
-const express = require("express");
-const mongoose = require("mongoose");
-const connectDB = require("./src/config/db");
-const Utilisateur = require("./src/models/Utilisateur");
-const Installation = require("./src/models/Installation");
-const authRouter = require("./src/routes/authRouter");
-const profileRouter = require("./src/routes/profileRouter");
-const installationRouter = require("./src/routes/installationRouter");
-const {errorHandler} = require("./src/middlewares/errorHandler");
+import "dotenv/config";
+import express from "express";
+import mongoose from "mongoose";
+import {pathToFileURL} from "node:url";
+import connectDB from "./src/config/db.js";
+import Utilisateur from "./src/models/Utilisateur.js";
+import Installation from "./src/models/Installation.js";
+import authRouter from "./src/routes/authRouter.js";
+import profileRouter from "./src/routes/profileRouter.js";
+import installationRouter from "./src/routes/installationRouter.js";
+import {errorHandler} from "./src/middlewares/errorHandler.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -48,8 +48,8 @@ async function startServer(){
     }
 }
 
-if(require.main === module){
+if(process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href){
     startServer();
 }
 
-module.exports = app;
+export default app;

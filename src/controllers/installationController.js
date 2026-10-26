@@ -1,9 +1,9 @@
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const Utilisateur = require("../models/Utilisateur");
-const Installation = require("../models/Installation");
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import Utilisateur from "../models/Utilisateur.js";
+import Installation from "../models/Installation.js";
 
-async function installationStatus(req, res, next){
+export async function installationStatus(req, res, next){
     try{
         const installation = await Installation.findById("installation");
         return res.status(200).json({installe : installation?.installe ?? false});
@@ -12,7 +12,7 @@ async function installationStatus(req, res, next){
     }
 }
 
-async function install(req, res, next){
+export async function install(req, res, next){
     try{
         const {nom, prenom, email, motDePasse} = req.body || {};
         if([nom, prenom, email, motDePasse].some(value => typeof value !== "string" || !value.trim())){
@@ -65,5 +65,3 @@ async function install(req, res, next){
         next(error);
     }
 }
-
-module.exports = {installationStatus, install};

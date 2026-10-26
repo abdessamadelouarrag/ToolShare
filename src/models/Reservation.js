@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { STATUTS_RESERVATION, ETATS_MATERIEL } = require('./constants');
+import mongoose from 'mongoose';
+import { STATUTS_RESERVATION, ETATS_MATERIEL } from './constants.js';
 
 const reservationSchema = new mongoose.Schema({
   utilisateurId: { type: mongoose.Schema.Types.ObjectId, ref: 'Utilisateur', required: true },
@@ -83,4 +83,4 @@ reservationSchema.index({ materielId: 1 }, {
   name: 'un_emprunt_en_cours_par_materiel',
 });
 
-module.exports = mongoose.model('Reservation', reservationSchema);
+export default mongoose.model('Reservation', reservationSchema);

@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { ETATS_MATERIEL, TYPES_MOUVEMENT } = require('./constants');
+import mongoose from 'mongoose';
+import { ETATS_MATERIEL, TYPES_MOUVEMENT } from './constants.js';
 
 const mouvementSchema = new mongoose.Schema({
   reservationId: { type: mongoose.Schema.Types.ObjectId, ref: 'Reservation', required: true },
@@ -18,4 +18,4 @@ const mouvementSchema = new mongoose.Schema({
 mouvementSchema.index({ magasinId: 1, date: -1 });
 mouvementSchema.index({ reservationId: 1, date: 1 });
 
-module.exports = mongoose.model('Mouvement', mouvementSchema);
+export default mongoose.model('Mouvement', mouvementSchema);

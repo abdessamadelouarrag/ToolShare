@@ -1,9 +1,9 @@
-const { test } = require('node:test');
-const assert = require('node:assert/strict');
-const mongoose = require('mongoose');
-const {
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import mongoose from 'mongoose';
+import {
   Utilisateur, Magasin, Materiel, Reservation, Mouvement, Installation,
-} = require('../src/models');
+} from '../src/models/index.js';
 
 const id = () => new mongoose.Types.ObjectId();
 const future = () => new Date(Date.now() + 60 * 60 * 1000);

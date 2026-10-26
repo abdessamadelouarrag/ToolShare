@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { ROLES } = require('./constants');
+import mongoose from 'mongoose';
+import { ROLES } from './constants.js';
 
 const utilisateurSchema = new mongoose.Schema({
   nom: { type: String, required: true, trim: true },
@@ -37,4 +37,4 @@ const utilisateurSchema = new mongoose.Schema({
 
 utilisateurSchema.index({ magasinId: 1, role: 1, actif: 1 });
 
-module.exports = mongoose.model('Utilisateur', utilisateurSchema);
+export default mongoose.model('Utilisateur', utilisateurSchema);

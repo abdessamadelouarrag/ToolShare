@@ -1,8 +1,8 @@
-const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose");
-const Utilisateur = require("../models/Utilisateur");
+import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
+import Utilisateur from "../models/Utilisateur.js";
 
-async function verifyToken(req, res, next){
+export async function verifyToken(req, res, next){
     const authorization = req.get("authorization");
     const token = authorization?.startsWith("Bearer ") ? authorization.slice(7) : null;
     if(!token){
@@ -33,5 +33,3 @@ async function verifyToken(req, res, next){
         next(error);
     }
 }
-
-module.exports = {verifyToken};

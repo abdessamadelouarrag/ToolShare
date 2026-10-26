@@ -1,11 +1,11 @@
-const {test} = require("node:test");
-const assert = require("node:assert/strict");
-const {randomUUID} = require("node:crypto");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const app = require("../server");
-const Utilisateur = require("../src/models/Utilisateur");
-const Installation = require("../src/models/Installation");
+import {test} from "node:test";
+import assert from "node:assert/strict";
+import {randomUUID} from "node:crypto";
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import app from "../server.js";
+import Utilisateur from "../src/models/Utilisateur.js";
+import Installation from "../src/models/Installation.js";
 
 test("installation endpoints and transaction rollback", {skip : !process.env.TEST_MONGO_URI}, async (t) => {
     const databaseName = "toolshare_install_test_" + randomUUID().replaceAll("-", "");

@@ -1,10 +1,10 @@
-const Utilisateur = require("../models/Utilisateur");
-const Magasin = require("../models/Magasin");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+import Utilisateur from "../models/Utilisateur.js";
+import Magasin from "../models/Magasin.js";
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
-async function register(req, res, next){
+export async function register(req, res, next){
     try{
         const {nom, prenom, email, motDePasse, role = "UTILISATEUR", magasinId} = req.body || {};
 
@@ -57,7 +57,7 @@ async function register(req, res, next){
     }
 }
 
-async function login(req, res, next){
+export async function login(req, res, next){
     try{
         const {email, motDePasse} = req.body || {};
         if(typeof email !== "string" || typeof motDePasse !== "string" || !email.trim() || !motDePasse){
@@ -89,7 +89,7 @@ async function login(req, res, next){
     }
 }
 
-async function logout(req, res, next){
+export async function logout(req, res, next){
     try{
         await Utilisateur.updateOne({_id : req.user._id}, {$inc : {tokenVersion : 1}});
         return res.status(200).json({message : "Deconnexion reussie."});
@@ -97,5 +97,3 @@ async function logout(req, res, next){
         next(error);
     }
 }
-
-module.exports = {register, login, logout};

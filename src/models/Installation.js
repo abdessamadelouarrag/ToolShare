@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const installationSchema = new mongoose.Schema({
   // A fixed primary key allows only one installation record.
@@ -11,4 +11,4 @@ const installationSchema = new mongoose.Schema({
   },
 }, { timestamps: true });
 
-module.exports = mongoose.model('Installation', installationSchema);
+export default mongoose.model('Installation', installationSchema);

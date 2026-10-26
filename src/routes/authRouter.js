@@ -1,6 +1,6 @@
-const {Router} = require("express");
-const {register, login, logout} = require("../controllers/authController");
-const {verifyToken} = require("../middlewares/verifyToken");
+import {Router} from "express";
+import {register, login, logout} from "../controllers/authController.js";
+import {verifyToken} from "../middlewares/verifyToken.js";
 
 const router = Router();
 
@@ -8,4 +8,4 @@ router.post("/register", verifyToken, register);
 router.post("/login", login);
 router.post("/logout", verifyToken, logout);
 
-module.exports = router;
+export default router;

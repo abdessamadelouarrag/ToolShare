@@ -1,4 +1,4 @@
-function errorHandler(error, req, res, next){
+export function errorHandler(error, req, res, next){
     if(res.headersSent){
         return next(error);
     }
@@ -18,5 +18,3 @@ function errorHandler(error, req, res, next){
     console.error(error);
     return res.status(500).json({message_error : "Erreur interne du serveur !"});
 }
-
-module.exports = {errorHandler};

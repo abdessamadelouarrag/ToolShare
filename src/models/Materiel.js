@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const materielSchema = new mongoose.Schema({
   reference: {
@@ -21,4 +21,4 @@ const materielSchema = new mongoose.Schema({
 
 materielSchema.index({ magasinId: 1, actif: 1, disponible: 1 });
 
-module.exports = mongoose.model('Materiel', materielSchema);
+export default mongoose.model('Materiel', materielSchema);

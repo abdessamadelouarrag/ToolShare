@@ -1,9 +1,9 @@
-const {Router} = require("express");
-const {installationStatus, install} = require("../controllers/installationController");
+import {Router} from "express";
+import {installationStatus, install} from "../controllers/installationController.js";
 
 const router = Router();
 
 router.get("/status", installationStatus);
 router.post("/", install);
 
-module.exports = router;
+export default router;
