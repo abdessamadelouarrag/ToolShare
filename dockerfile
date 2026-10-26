@@ -1,20 +1,17 @@
-# Utiliser l'image officielle Node.js (version LTS recommandée)
-FROM node:20-alpine
+FROM node:24-alpine
 
-# Définir le répertoire de travail dans le conteneur
 WORKDIR /usr/src/app
 
-# Copier les fichiers de dépendances
 COPY package*.json ./
+RUN npm ci && npm cache clean --force
 
-# Installer les dépendances
-RUN npm install
+COPY --chown=node:node . .
 
-# Copier le reste du code source
-COPY . .
+USER node
 
-# Exposer le port de l'API (ex: 3000)
 EXPOSE 3000
 
-# Commande par défaut pour lancer l'application (mode dev avec nodemon ou démarrage standard)
-CMD ["npm", "run", "dev"]
+HEALTHCHECK --interval=10s --timeout=3s --start-period=30s --retries=3 \
+  CMD node -e "fetch('http://127.0.0.1:' + (process.env.PORT || 3000) + '/health').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+
+CMD ["npm", "start"]
