@@ -75,3 +75,22 @@ export async function updateMagasin(req, res, next){
         next(error);
     }
 }
+
+export async function deactivateMagasin(req, res, next){
+    try{
+        if(!mongoose.isObjectIdOrHexString(req.params.id)){
+            return res.status(400).json({message_error : "Identifiant du magasin invalide !"});
+        }
+        const magasin = await Magasin.findByIdAndUpdate(
+            req.params.id,
+            {$set : {actif : false}},
+            {returnDocument : "after", runValidators : true}
+        );
+        if(!magasin){
+            return res.status(404).json({message_error : "Magasin introuvable !"});
+        }
+        return res.status(200).json({message : "Magasin desactive. Historique conserve.", magasin : magasin});
+    }catch(error){
+        next(error);
+    }
+}
