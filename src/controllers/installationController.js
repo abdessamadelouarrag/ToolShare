@@ -1,67 +1,74 @@
+// src/controllers/installationController.js
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import Utilisateur from "../models/Utilisateur.js";
 import Installation from "../models/Installation.js";
+import { AppError } from "../utils/AppError.js";
 
-export async function installationStatus(req, res, next){
-    try{
-        const installation = await Installation.findById("installation");
-        return res.status(200).json({installe : installation?.installe ?? false});
-    }catch(error){
+export async function installationStatus(req, res, next) {
+    try {
+        // Utilisation de findOne() car l'ID est un ObjectId
+        const installation = await Installation.findOne();
+        return res.status(200).json({ installe: installation?.installe ?? false });
+    } catch (error) {
         next(error);
     }
 }
 
-export async function install(req, res, next){
-    try{
-        const {nom, prenom, email, motDePasse} = req.body || {};
-        if([nom, prenom, email, motDePasse].some(value => typeof value !== "string" || !value.trim())){
-            return res.status(400).json({message_error : "Nom, prenom, email et mot de passe obligatoires !"});
-        }
-        if(!/^\S+@\S+\.\S+$/.test(email.trim())){
-            return res.status(400).json({message_error : "Email invalide !"});
-        }
-        if(motDePasse.length < 8 || Buffer.byteLength(motDePasse) > 72){
-            return res.status(400).json({message_error : "Mot de passe : minimum 8 caracteres, maximum 72 octets !"});
-        }
+export async function install(req, res, next) {
+    try {
+        // Les données sont garanties valides grâce au middleware Zod
+        const { nom, prenom, email, motDePasse } = req.body;
 
         const hashedPassword = await bcrypt.hash(motDePasse, 10);
+        
         const admin = await mongoose.connection.transaction(async (session) => {
-            const installation = await Installation.findById("installation").session(session);
-            const findAdmin = await Utilisateur.exists({role : "ADMIN"}).session(session);
-            if(installation?.installe || findAdmin){
-                return null;
+            const installation = await Installation.findOne().session(session);
+            const findAdmin = await Utilisateur.exists({ role: "ADMIN" }).session(session);
+            
+            if (installation?.installe || findAdmin) {
+                // Déclenche l'erreur personnalisée qui annulera automatiquement la transaction
+                throw new AppError("L'application est déjà initialisée ou un Admin existe déjà.", 403);
             }
 
-            // Le document unique serialise les installations simultanees.
             const state = installation || new Installation();
             state.installe = true;
             state.installeLe = new Date();
-            await state.save({session});
+            await state.save({ session });
 
             const user = new Utilisateur({
-                nom : nom.trim(),
-                prenom : prenom.trim(),
-                email : email.trim().toLowerCase(),
-                motDePasseHash : hashedPassword,
-                role : "ADMIN"
+                nom,
+                prenom,
+                email: email.toLowerCase(),
+                motDePasseHash: hashedPassword,
+                role: "ADMIN",
+                actif: true
             });
-            await user.save({session});
+            await user.save({ session });
+            
             return user;
         });
 
-        if(!admin){
-            return res.status(409).json({message_error : "L'application est deja initialisee ou un Admin existe deja !"});
-        }
+        // Réponse formatée sans exposer le hash du mot de passe
         return res.status(201).json({
-            message_success : "Installation effectuee.",
-            installe : true,
-            user : admin
+            status: "success",
+            message: "Installation effectuée avec succès.",
+            data: {
+                installe: true,
+                user: {
+                    id: admin._id,
+                    nom: admin.nom,
+                    prenom: admin.prenom,
+                    email: admin.email,
+                    role: admin.role
+                }
+            }
         });
-    }catch(error){
-        if(error.code === 11000){
-            return res.status(409).json({message_error : "Installation deja effectuee ou email deja utilise !"});
+    } catch (error) {
+        if (error.code === 11000) {
+            return next(new AppError("Erreur : email déjà utilisé.", 409));
         }
+
         next(error);
     }
 }

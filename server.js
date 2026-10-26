@@ -1,14 +1,15 @@
 import "dotenv/config";
 import express from "express";
 import mongoose from "mongoose";
-import {pathToFileURL} from "node:url";
+import { pathToFileURL } from "node:url";
 import connectDB from "./src/config/db.js";
 import Utilisateur from "./src/models/Utilisateur.js";
 import Installation from "./src/models/Installation.js";
 import authRouter from "./src/routes/authRouter.js";
 import profileRouter from "./src/routes/profileRouter.js";
 import installationRouter from "./src/routes/installationRouter.js";
-import {errorHandler} from "./src/middlewares/errorHandler.js";
+// 1. Importez également le notFoundHandler
+import { errorHandler, notFoundHandler } from "./src/middlewares/errorHandler.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -16,25 +17,30 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 
 app.get("/", (req, res) => {
-    res.json({message : "Welcome To ToolShare"});
+    res.json({ message: "Welcome To ToolShare" });
 });
 
 app.get("/health", (req, res) => {
     const connected = mongoose.connection.readyState === 1;
     res.status(connected ? 200 : 503).json({
-        status : connected ? "ok" : "unavailable",
-        database : connected ? "connected" : "disconnected"
+        status: connected ? "ok" : "unavailable",
+        database: connected ? "connected" : "disconnected"
     });
 });
 
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/installation", installationRouter);
+
+// 2. Interceptez toutes les routes non définies avant le errorHandler
+app.use("*", notFoundHandler);
+
+// 3. Le errorHandler reste strictement le dernier
 app.use(errorHandler);
 
-async function startServer(){
-    try{
-        if(!process.env.JWT_SECRET){
+async function startServer() {
+    try {
+        if (!process.env.JWT_SECRET) {
             throw new Error("JWT_SECRET est obligatoire dans .env !");
         }
         await connectDB();
@@ -42,13 +48,13 @@ async function startServer(){
         app.listen(port, "0.0.0.0", () => {
             console.log(`Server start in port ${port}`);
         });
-    }catch(error){
+    } catch (error) {
         console.error(error);
         process.exit(1);
     }
 }
 
-if(process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href){
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
     startServer();
 }
 
