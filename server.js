@@ -12,6 +12,7 @@ import installationRouter from "./src/routes/installationRouter.js";
 import magasinRouter from "./src/routes/magasinRouter.js";
 import adminRouter from "./src/routes/adminRouter.js";
 import materielRouter from "./src/routes/materielRouter.js";
+import gestionnaireRouter from "./src/routes/gestionnaireRouter.js";
 import {errorHandler} from "./src/middlewares/errorHandler.js";
 
 const app = express();
@@ -37,6 +38,7 @@ app.use("/api/installation", installationRouter);
 app.use("/api/magasins", magasinRouter);
 app.use("/api/admin", adminRouter);
 app.use("/api/materiels", materielRouter);
+app.use("/api/gestionnaire", gestionnaireRouter);
 app.use(errorHandler);
 
 async function startServer(){
