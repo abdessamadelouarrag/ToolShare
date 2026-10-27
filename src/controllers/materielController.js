@@ -98,3 +98,27 @@ export async function deactivateMateriel(req, res, next){
         next(error);
     }
 }
+
+export async function updateDisponibilite(req, res, next){
+    try{
+        if(!mongoose.isObjectIdOrHexString(req.params.id)){
+            return res.status(400).json({message_error : "Identifiant du materiel invalide !"});
+        }
+        const {disponible} = req.body || {};
+        if(typeof disponible !== "boolean"){
+            return res.status(400).json({message_error : "Disponible doit etre true ou false !"});
+        }
+        const materiel = await Materiel.findOne({_id : req.params.id, magasinId : req.magasin._id});
+        if(!materiel){
+            return res.status(404).json({message_error : "Materiel introuvable dans votre magasin !"});
+        }
+        if(!materiel.actif){
+            return res.status(409).json({message_error : "Le materiel est desactive !"});
+        }
+        materiel.disponible = disponible;
+        await materiel.save();
+        return res.status(200).json({message : disponible ? "Materiel remis en service." : "Materiel indisponible.", materiel : materiel});
+    }catch(error){
+        next(error);
+    }
+}
