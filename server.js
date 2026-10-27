@@ -5,6 +5,7 @@ import {pathToFileURL} from "node:url";
 import connectDB from "./src/config/db.js";
 import Utilisateur from "./src/models/Utilisateur.js";
 import Installation from "./src/models/Installation.js";
+import Materiel from "./src/models/Materiel.js";
 import authRouter from "./src/routes/authRouter.js";
 import profileRouter from "./src/routes/profileRouter.js";
 import installationRouter from "./src/routes/installationRouter.js";
@@ -42,7 +43,7 @@ async function startServer(){
             throw new Error("JWT_SECRET est obligatoire dans .env !");
         }
         await connectDB();
-        await Promise.all([Utilisateur.init(), Installation.init()]);
+        await Promise.all([Utilisateur.init(), Installation.init(), Materiel.init()]);
         app.listen(port, "0.0.0.0", () => {
             console.log(`Server start in port ${port}`);
         });
