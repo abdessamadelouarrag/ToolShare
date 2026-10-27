@@ -33,6 +33,13 @@ export function verifyMagasinActif(req, res, next){
     next();
 }
 
+export function verifyUtilisateur(req, res, next){
+    if(req.user?.role !== "UTILISATEUR"){
+        return res.status(403).json({message_error : "Acces reserve aux utilisateurs !"});
+    }
+    next();
+}
+
 export async function verifyToken(req, res, next){
     const authorization = req.get("authorization");
     const token = authorization?.startsWith("Bearer ") ? authorization.slice(7) : null;
