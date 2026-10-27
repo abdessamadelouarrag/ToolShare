@@ -1,10 +1,34 @@
 import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import Utilisateur from "../models/Utilisateur.js";
+import Magasin from "../models/Magasin.js";
 
 export function verifyAdmin(req, res, next){
     if(req.user?.role !== "ADMIN"){
         return res.status(403).json({message_error : "Acces reserve a l'Admin !"});
+    }
+    next();
+}
+
+export async function verifyGestionnaire(req, res, next){
+    try{
+        if(req.user?.role !== "GESTIONNAIRE" || !req.user.magasinId){
+            return res.status(403).json({message_error : "Acces reserve a un gestionnaire affecte a un magasin !"});
+        }
+        const magasin = await Magasin.findById(req.user.magasinId);
+        if(!magasin){
+            return res.status(404).json({message_error : "Magasin affecte introuvable !"});
+        }
+        req.magasin = magasin;
+        next();
+    }catch(error){
+        next(error);
+    }
+}
+
+export function verifyMagasinActif(req, res, next){
+    if(!req.magasin?.actif){
+        return res.status(409).json({message_error : "Le magasin est desactive !"});
     }
     next();
 }
