@@ -5,11 +5,16 @@ import { pathToFileURL } from "node:url";
 import connectDB from "./src/config/db.js";
 import Utilisateur from "./src/models/Utilisateur.js";
 import Installation from "./src/models/Installation.js";
+import Materiel from "./src/models/Materiel.js";
 import authRouter from "./src/routes/authRouter.js";
 import profileRouter from "./src/routes/profileRouter.js";
 import installationRouter from "./src/routes/installationRouter.js";
-// 1. Importez également le notFoundHandler
-import { errorHandler, notFoundHandler } from "./src/middlewares/errorHandler.js";
+import magasinRouter from "./src/routes/magasinRouter.js";
+import adminRouter from "./src/routes/adminRouter.js";
+import materielRouter from "./src/routes/materielRouter.js";
+import gestionnaireRouter from "./src/routes/gestionnaireRouter.js";
+import catalogueRouter from "./src/routes/catalogueRouter.js";
+import {errorHandler} from "./src/middlewares/errorHandler.js";
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -31,11 +36,11 @@ app.get("/health", (req, res) => {
 app.use("/api/auth", authRouter);
 app.use("/api/profile", profileRouter);
 app.use("/api/installation", installationRouter);
-
-// 2. Interceptez toutes les routes non définies avant le errorHandler
-app.use("*", notFoundHandler);
-
-// 3. Le errorHandler reste strictement le dernier
+app.use("/api/magasins", magasinRouter);
+app.use("/api/admin", adminRouter);
+app.use("/api/materiels", materielRouter);
+app.use("/api/gestionnaire", gestionnaireRouter);
+app.use("/api/catalogue", catalogueRouter);
 app.use(errorHandler);
 
 async function startServer() {
@@ -44,7 +49,7 @@ async function startServer() {
             throw new Error("JWT_SECRET est obligatoire dans .env !");
         }
         await connectDB();
-        await Promise.all([Utilisateur.init(), Installation.init()]);
+        await Promise.all([Utilisateur.init(), Installation.init(), Materiel.init()]);
         app.listen(port, "0.0.0.0", () => {
             console.log(`Server start in port ${port}`);
         });
