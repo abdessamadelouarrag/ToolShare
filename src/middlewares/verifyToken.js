@@ -2,6 +2,13 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 import Utilisateur from "../models/Utilisateur.js";
 
+export function verifyAdmin(req, res, next){
+    if(req.user?.role !== "ADMIN"){
+        return res.status(403).json({message_error : "Acces reserve a l'Admin !"});
+    }
+    next();
+}
+
 export async function verifyToken(req, res, next){
     const authorization = req.get("authorization");
     const token = authorization?.startsWith("Bearer ") ? authorization.slice(7) : null;
