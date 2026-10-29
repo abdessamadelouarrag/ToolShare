@@ -1,20 +1,18 @@
-export function errorHandler(error, req, res, next){
-    if(res.headersSent){
-        return next(error);
-    }
-    if(error.code === 11000){
-        return res.status(409).json({message_error : "Email ou reference deja utilise !"});
-    }
-    if(error.name === "ValidationError" || error.name === "CastError"){
-        return res.status(400).json({message_error : "Donnees invalides !"});
-    }
-    if(error.type === "entity.parse.failed"){
-        return res.status(400).json({message_error : "Requete JSON invalide !"});
-    }
-    if(error.type === "entity.too.large"){
-        return res.status(413).json({message_error : "Requete trop volumineuse !"});
-    }
+// src/middlewares/errorHandler.middleware.js (Mise à jour)
+import { AppError } from '../utils/AppError.js';
 
-    console.error(error);
-    return res.status(500).json({message_error : "Erreur interne du serveur !"});
-}
+export const errorHandler = (err, req, res, next) => {
+  err.statusCode = err.statusCode || 500;
+  err.status = err.status || 'error';
+
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+    stack: process.env.NODE_ENV === 'development' ? err.stack : undefined
+  });
+};
+
+export const notFoundHandler = (req, res, next) => {
+  // Utilisation de AppError pour générer une 404
+  next(new AppError(`La ressource demandée (${req.originalUrl}) n'existe pas`, 404));
+};

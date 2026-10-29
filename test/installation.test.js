@@ -87,8 +87,8 @@ test("installation endpoints and transaction rollback", {skip : !process.env.TES
             request("POST", "/api/installation", account("admin-a@example.com")),
             request("POST", "/api/installation", account("admin-b@example.com"))
         ]);
-        assert.deepEqual(results.map(result => result.status).sort(), [201, 409]);
-        admin = results.find(result => result.status === 201).data.user;
+        assert.deepEqual(results.map(result => result.status).sort(), [201, 403]);
+        admin = results.find(result => result.status === 201).data.data.user;
         assert.equal(admin.role, "ADMIN");
         assert.equal(admin.motDePasseHash, undefined);
         assert.equal(admin.tokenVersion, undefined);
@@ -101,18 +101,18 @@ test("installation endpoints and transaction rollback", {skip : !process.env.TES
     });
 
     await t.test("the first Admin password is hashed and usable for login", async () => {
-        const stored = await Utilisateur.findById(admin._id).select("+motDePasseHash");
+        const stored = await Utilisateur.findById(admin.id).select("+motDePasseHash");
         assert.notEqual(stored.motDePasseHash, "Test-password-123");
         assert.equal(await bcrypt.compare("Test-password-123", stored.motDePasseHash), true);
         const result = await request("POST", "/api/auth/login", {email : admin.email, motDePasse : "Test-password-123"});
         assert.equal(result.status, 200);
-        assert.ok(result.data.token);
-        assert.equal(result.data.user.motDePasseHash, undefined);
+        assert.ok(result.data.data.token);
+        assert.equal(result.data.data.user.motDePasseHash, undefined);
     });
 
     await t.test("persisted installation rejects repeats and the old default route is removed", async () => {
-        await Utilisateur.updateOne({_id : admin._id}, {$set : {actif : false}});
-        assert.equal((await request("POST", "/api/installation", account("again@example.com"))).status, 409);
+        await Utilisateur.updateOne({_id : admin.id}, {$set : {actif : false}});
+        assert.equal((await request("POST", "/api/installation", account("again@example.com"))).status, 403);
         assert.equal(await Utilisateur.countDocuments(), 1);
         assert.equal((await request("GET", "/api/installation/status")).data.installe, true);
         const oldRoute = await fetch(base + "/api/auth/default", {
