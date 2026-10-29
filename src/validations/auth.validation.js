@@ -16,3 +16,10 @@ export const registerSchema = z.object({
     message: "Format d'ID magasin invalide"
   }).optional().nullable()
 });
+
+export const installationSchema = registerSchema.pick({
+  nom: true,
+  prenom: true,
+  email: true,
+  motDePasse: true
+});

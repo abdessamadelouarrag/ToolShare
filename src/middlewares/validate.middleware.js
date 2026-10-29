@@ -6,7 +6,8 @@ export const validate = (schema) => {
       next();
     } catch (error) {
       // Extraction des messages d'erreur de Zod
-      const errors = error.errors.map((err) => err.message);
+      if (!Array.isArray(error.issues)) return next(error);
+      const errors = error.issues.map((err) => err.message);
       
       return res.status(400).json({
         status: 'error',
